@@ -1,1 +1,1 @@
-Start with running the code "Otolith_shape_classification_kob3_withSIndices.R" in R. This will show which files to read in and which are used as input and which are output. 
+Start with running the code "Fourier_analysis_kob2_Norm.R" in R. This will show which files to read in and which are output, and where to go next. 
