@@ -3,23 +3,23 @@
 # of cryptic congeners in the northern Benguela ocean warming hotspot
 # Authors:
 # M.R. Wilhelm 
-#C.E. Jagger 
-#N.M. Nghipangelwa
-#B.A. Pringle 
-#P.W. Shaw
-#W.M. Potts
-#R. Henriques 
-#N.J. McKeown
+# C.E. Jagger 
+# N.M. Nghipangelwa
+# B.A. Pringle 
+# P.W. Shaw
+# W.M. Potts
+# R. Henriques 
+# N.J. McKeown
 #
 # mwilhelm@unam.na
 # 16 April 2024
 # Updated 05 August 2024
 #
-#Based on script by: Smoliński, S., Schade, F. M., & Berg, F. (2020). Assessing the performance of statistical classifiers to discriminate fish stocks using Fourier analysis of otolith shape. Canadian Journal of Fisheries and Aquatic Sciences, 77(4), 674-683.
+# Based on script by: Smoliński, S., Schade, F. M., & Berg, F. (2020). Assessing the performance of statistical classifiers to discriminate fish stocks using Fourier analysis of otolith shape. Canadian Journal of Fisheries and Aquatic Sciences, 77(4), 674-683.
 #
-#R version 4.3.0 (2023-04-21 ucrt)
-#Platform: x86_64-w64-mingw32/x64 (64-bit)
-#Running under: Windows 10 x64 (build 19042)
+# R version 4.3.0 (2023-04-21 ucrt)
+# Platform: x86_64-w64-mingw32/x64 (64-bit)
+# Running under: Windows 10 x64 (build 19042)
 
 library(psych)
 library(vegan)
@@ -453,73 +453,13 @@ LDA_resultsSVM <- train(pop~., method='lssvmRadial', preProcess=prepr, data=data
 ## Accuracy, Kappa
 ######################
 #FOR ONLY FOURIER DESCRIPTORS
-
 OriginalLDA_results
-# Linear Discriminant Analysis 
-# 
-# 217 samples
-# 40 predictor
-# 3 classes: 'A.coronus', 'A.inodorus', 'Hybrid' 
-# 
-# Pre-processing: scaled (40), centered (40) 
-# Resampling: Cross-Validated (4 fold, repeated 100 times) 
-# Summary of sample sizes: 163, 163, 163, 162, 163, 163, ... 
-# Resampling results:
-#   
-#   Accuracy   Kappa    
-# 0.9080556  0.6924353
 
 confusionMatrix(LDA_results)
-# Cross-Validated (4 fold, repeated 100 times) Confusion Matrix 
-# 
-# (entries are percentual average cell counts across resamples)
-# 
-# Reference
-# Prediction   A.coronus A.inodorus Hybrid
-# A.coronus       12.2        2.2    0.1
-# A.inodorus       0.9       78.2    3.2
-# Hybrid           0.3        2.5    0.4
-# 
-# Accuracy (average) : 0.9081
 
 LDA_resultsSVM
-#Least Squares Support Vector Machine with Radial Basis Function Kernel 
-# 
-# 217 samples
-# 40 predictor
-# 3 classes: 'A.coronus', 'A.inodorus', 'Hybrid' 
-# 
-# Pre-processing: scaled (40), centered (40) 
-# Resampling: Cross-Validated (4 fold, repeated 100 times) 
-# Summary of sample sizes: 163, 163, 162, 163, 163, 162, ... 
-# Resampling results across tuning parameters:
-#   
-#   sigma       tau     Accuracy   Kappa    
-# 0.00753514  0.0625  0.9286633  0.7228791
-# 0.00753514  0.1250  0.9294032  0.7253099
-# 0.00753514  0.2500  0.9302332  0.7285127
-# 0.01548195  0.0625  0.9253064  0.7005018
-# 0.01548195  0.1250  0.9256734  0.7022571
-# 0.01548195  0.2500  0.9254857  0.7011305
-# 0.02342876  0.0625  0.9232391  0.6870890
-# 0.02342876  0.1250  0.9233746  0.6876633
-# 0.02342876  0.2500  0.9231448  0.6863692
-# 
-# Accuracy was used to select the optimal model using the largest value.
-# The final values used for the model were sigma = 0.00753514 and tau = 0.25.
 
 confusionMatrix(LDA_resultsSVM)
-# Cross-Validated (4 fold, repeated 100 times) Confusion Matrix 
-# 
-# (entries are percentual average cell counts across resamples)
-# 
-# Reference
-# Prediction   A.coronus A.inodorus Hybrid
-# A.coronus       11.4        1.3    0.0
-# A.inodorus       2.0       81.6    3.7
-# Hybrid           0.0        0.0    0.0
-# 
-# Accuracy (average) : 0.9302
 
 ######################
 ## Variable importance
@@ -611,10 +551,10 @@ path
 setwd(path) # If not done in previous script and if not run at once
 
 sapeInd = read.table("shapeIndices_forLDA.csv", header = TRUE) 
-View(sapeInd)
+names(sapeInd)
 
 dataCLASS = read.table("dataCLASSIFICATION_lc.csv", header = TRUE) # Do this if not done at once. 
-View(dataCLASS) #Had ID as row names, and pop as column
+names(dataCLASS) #Had ID as row names, and pop as column
 
 sapeInd = sapeInd%>%dplyr::select(-pop) #Remove those that occur in both dataCLASS and sapeInd
 
@@ -628,6 +568,9 @@ dataCLASSIFICATION_lc = dataCLASSIFICATION_lcFull%>%dplyr::select(-length, -ID) 
 #Analysis excluding shape indices
 dataCLASSIFICATION_lc2 = dataCLASSIFICATION_lc%>%dplyr::select(-circ, -OCD.OH, -round, -ellip)
 
+#Analysis excluding some variables (for SVM)
+dataCLASSIFICATION_lc3 = dataCLASSIFICATION_lc2%>%dplyr::select(-C3, -C6, -C14, -D1, -D2, -A2, -B16, -A13)
+
 ################################################################################
 #############################
 ##### Discrimination using LDA ON LENGTH-CORRECTED DATA INCLUDING AND EXCLUDING SHAPE INDICES
@@ -637,12 +580,16 @@ library(MASS)
 
 names(dataCLASSIFICATION_lc)
 names(dataCLASSIFICATION_lc2)
+names(dataCLASSIFICATION_lc3)
 
 dataCLASSIFICATION_lc$pop <- as.factor(dataCLASSIFICATION_lc$pop)
-dataCLASSIFICATION_lc2$pop <- as.factor(dataCLASSIFICATION_lc$pop)
+dataCLASSIFICATION_lc2$pop <- as.factor(dataCLASSIFICATION_lc2$pop)
+dataCLASSIFICATION_lc3$pop <- as.factor(dataCLASSIFICATION_lc3$pop)
 
 linear <- lda(pop~., dataCLASSIFICATION_lc) #including shape indices
 linear2 <- lda(pop~., dataCLASSIFICATION_lc2) #excluding shape indices
+linear3 <- lda(pop~., dataCLASSIFICATION_lc3) #excluding shape indices and some descriptors
+
 linear
 
 # Call:
@@ -811,19 +758,21 @@ linear2
 # 0.9176 0.0824 
 #These are identical in proportion of trace
 
+linear3
+
 plot.new()
 op=par(mfrow = c(1,1), mar=c(4.2, 3.8, 0.2, 0.2))
 plot(linear)
 dev.off()
 
-#Improve plot
+#Improve plot to points
 
 tiff("LDA1Spp5-lengthCorr_SI3.tiff", width = 8, height = 6,units = "in", res = 600, compression = "lzw")
 opar <- par(mar = c(4,5,1,1), oma = c(2,0,0,0))
 plot(linear, xlab = "LD1: 91.76%", ylab = "LD2: 8.24%", col = dataCLASSIFICATION_lc$pop, 
      panel = points, pch = 4, lwd = 3, cex = 3, cex.lab = 1.5) 
 
-#pop needs to be done as.factor; otherwise Error "Invalid color name: 'A. inodorus'"
+#pop needs to be done 'as.factor'; otherwise Error "Invalid color name: 'A. inodorus'"
 
 dev.off()
 
@@ -882,7 +831,7 @@ confusionMatrix(LDA_results) #including SI
 
 LDA_results2 <- train(pop~., method='lda', preProcess=prepr, data=dataCLASSIFICATION_lc2, trControl = trcntr)
 LDA_results2 #excluding SI
-# confusionMatrix(LDA_results2)
+confusionMatrix(LDA_results2)
 # 
 # Cross-Validated (4 fold, repeated 100 times) Confusion Matrix 
 # 
@@ -895,11 +844,71 @@ LDA_results2 #excluding SI
 # Hybrid           0.0        0.6    1.8
 # 
 # Accuracy (average) : 0.957
+#Identical accuary matrix
 
+LDA_results3 <- train(pop~., method='lda', preProcess=prepr, data=dataCLASSIFICATION_lc3, trControl = trcntr)
+
+LDA_results3
+
+confusionMatrix(LDA_results3)
+# Cross-Validated (4 fold, repeated 100 times) Confusion Matrix 
+# 
+# (entries are percentual average cell counts across resamples)
+# 
+# Reference
+# Prediction   A.coronus A.inodorus Hybrid
+# A.coronus       12.4        0.9    0.0
+# A.inodorus       0.9       81.6    1.8
+# Hybrid           0.0        0.5    1.8
+# 
+# Accuracy (average) : 0.9584
+
+#############################
+##### Discrimination using SVM ON LENGTH-CORRECTED DATA EXCLUDING SHAPE INDICES AND EXCLUDING ADDITIONAL 
+###### (UNIMPORTANT) DESCRIPTORS
+#############################
 library(kernlab)
-LDA_resultsSVM <- train(pop~., method='lssvmRadial', preProcess=prepr, data=dataCLASSIFICATION_lc, trControl = trcntr)
+
+LDA_resultsSVM <- train(pop~., method='lssvmRadial', preProcess=prepr, data=dataCLASSIFICATION_lc3, trControl = trcntr)
+
 LDA_resultsSVM
+# Least Squares Support Vector Machine with Radial Basis Function Kernel 
+# 
+# 47089 samples
+# 32 predictor
+# 3 classes: 'A.coronus', 'A.inodorus', 'Hybrid' 
+# 
+# Pre-processing: scaled (32), centered (32) 
+# Resampling: Cross-Validated (4 fold, repeated 100 times) 
+# Summary of sample sizes: 35317, 35316, 35317, 35317, 35317, 35317, ... 
+# Resampling results across tuning parameters:
+#   
+#   sigma        tau     Accuracy   Kappa    
+# 0.009651078  0.0625  0.9677419  0.8853289
+# 0.009651078  0.1250  0.9677419  0.8853289
+# 0.009651078  0.2500  0.9539170  0.8298248
+# 0.019832492  0.0625  0.9723502  0.9005743
+# 0.019832492  0.1250  0.9723502  0.9005743
+# 0.019832492  0.2500  0.9677419  0.8853289
+# 0.030013907  0.0625  0.9769585  0.9182189
+# 0.030013907  0.1250  0.9769585  0.9182189
+# 0.030013907  0.2500  0.9769585  0.9182189
+# 
+# Accuracy was used to select the optimal model using the largest value.
+# The final values used for the model were sigma = 0.03001391 and tau = 0.0625.
+
 confusionMatrix(LDA_resultsSVM)
+# cross-Validated (4 fold, repeated 100 times) Confusion Matrix 
+# 
+# (entries are percentual average cell counts across resamples)
+# 
+# Reference
+# Prediction   A.coronus A.inodorus Hybrid
+# A.coronus       12.9        0.5    0.0
+# A.inodorus       0.5       82.5    1.4
+# Hybrid           0.0        0.0    2.3
+# 
+# Accuracy (average) : 0.977
 
 dataCLASSIFICATION_1p = dataCLASSIFICATION_lc2%>%dplyr::select(-pop)
 
@@ -910,13 +919,6 @@ dataCLASSIFICATION_1p$predSVM = predict(LDA_resultsSVM, newdata=dataCLASSIFICATI
 dataCLASSIFICATION_1p = cbind(dataCLASSIFICATION_1p, ID = dataCLASS$ID)
 view(dataCLASSIFICATION_1p)
 write.csv(dataCLASSIFICATION_1p, "fourierDescrip_withpred2.csv")
-
-# Original used LDA, but best according to Smolinski is support Vector Machines (SVM)
-# method = 'lda' (most commonly used) = library caret
-#
-#Least Squares Support Vector Machine with Radial Basis Function Kernel
-#method = 'lssvmRadial'
-#package required: kernlab => Smolinski
 
 ######################
 ## Variable importance
@@ -1004,7 +1006,6 @@ capresults_sites%>%
   xlab(paste("CAP1:", round(eig.ratio[1]*100,2), "%"))+
   ylab(paste("CAP2:", round(eig.ratio[2]*100,2), "%"))
 dev.off()
-
 
 ############################
 ##### Discrimination using LDA
